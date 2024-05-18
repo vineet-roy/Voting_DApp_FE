@@ -1,0 +1,71 @@
+/* voting.css */
+
+.voting-app {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.proposals {
+  margin-bottom: 20px;
+}
+
+.proposals ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.proposals li {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.proposals li button {
+  margin-left: 10px;
+}
+
+.add-proposal input[type="text"] {
+  padding: 5px;
+  margin-right: 10px;
+}
+
+.add-proposal button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.fetch-winner button {
+  padding: 5px 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+h2 {
+  margin-top: 20px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .voting-app {
+    padding: 10px;
+  }
+
+  .add-proposal input[type="text"] {
+    width: 60%;
+  }
+}
