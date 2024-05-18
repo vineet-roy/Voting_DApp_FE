@@ -3,7 +3,7 @@ import getWeb3 from "./web3";
 import VotingContract from "./VotingContract.json"; // Ensure this path is correct
 import "./App.css";
 import { toast } from 'react-toastify';
-const CONTRACT_ADDRESS = "0xcae9BAF6dB906Bed336CdB5E886823dbAE8Ae4e9";
+const CONTRACT_ADDRESS = "0xc43b7557FbB4960C06E188F2d7f998C44361B84F";
 
 const Voting = () => {
   const [web3, setWeb3] = useState(null);
@@ -16,29 +16,109 @@ const Voting = () => {
   const [loading, setLoading] = useState(true);
   const [delegateAddress, setDelegateAddress] = useState("");
 
-  useEffect(() => {
-    const init = async () => {
-      setLoading(false);
+    useEffect(() => {
+      const init = async () => {
+        try {
+          const web3Instance = await getWeb3();
+          setWeb3(web3Instance);
+  
+          const accounts = await web3Instance.eth.getAccounts();
+          setAccounts(accounts);
+  
+          if (VotingContract && CONTRACT_ADDRESS) {
+            const contractInstance = new web3Instance.eth.Contract(
+              VotingContract,
+              CONTRACT_ADDRESS
+            );
+            setContract(contractInstance);
+  
+            // Fetch proposals
+            const proposalCount = await contractInstance.methods
+              .proposalsLength()
+              .call();
+            let proposalsArray = [];
+            for (let i = 0; i < proposalCount; i++) {
+              let proposal = await contractInstance.methods.proposals(i).call();
+              proposalsArray.push(proposal);
+            }
+            setProposals(proposalsArray);
+  
+          } else {
+            console.error("ABI or Contract Address is undefined");
+          }
+  
+          setLoading(false); // Set loading to false once everything is loaded
+        } catch (error) {
+          console.error("Error during contract initialization:", error);
+        }
+      };
+  
+      init();
+    }, []);
+
+    const handleVote = async (proposalIndex) => {
+      try {
+        await contract.methods.vote(proposalIndex).send({ from: accounts[0] });
+  
+        // Update the specific proposal's vote count
+        const updatedProposal = await contract.methods
+          .proposals(proposalIndex)
+          .call();
+        setProposals((prevProposals) => {
+          const updatedProposals = [...prevProposals];
+          updatedProposals[proposalIndex] = updatedProposal;
+          return updatedProposals;
+        });
+        toast.success("voted successfully!");
+      } catch (error) {
+        console.error("Error while voting:", error);
+      }
     };
 
-    init();
-  }, []);
+    const fetchWinner = async () => {
+      try {
+        const winnerName = await contract.methods.winnerName().call();
+        setWinner(winnerName);
+      } catch (error) {
+        console.error("Error fetching winner:", error);
+      }
+    };
+    const handleDelegate = async (delegateAddress) => {
+      if (!contract) {
+        console.error("Contract not loaded yet");
+        return;
+      }
+  
+      try {
+        await contract.methods
+          .giveRightToVote(delegateAddress)
+          .send({ from: accounts[0] });
+          toast.success("Voting rights provided successfully"); // Success notification
+        console.log("Voting rights delegated successfully");
+      } catch (error) {
+        console.error("Error delegating voting rights:", error);
+      }
+    };
 
-  const handleVote = async (proposalIndex) => {
-  };
-
-  const fetchWinner = async () => {
-  };
-
-  const handleDelegate = async (delegateAddress) => {
-  };
-
-  const handleAddProposal = async () => {
-    if (!contract) {
-      console.error("Contract not loaded yet");
-      return;
-    }
-  };
+    const handleAddProposal = async () => {
+      if (!contract) {
+        console.error("Contract not loaded yet");
+        return;
+      }
+  
+      try {
+        await contract.methods
+          .addProposal(newProposal)
+          .send({ from: accounts[0] });
+        const updatedProposals = await contract.methods.proposals().call();
+        setProposals(updatedProposals);
+        setNewProposal("");
+        toast.success("Proposal Added Successfully!");
+  
+      } catch (error) {
+        console.error("Error adding proposal:", error);
+      }
+    };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -71,7 +151,7 @@ const Voting = () => {
             ))}
           </ul>
         </div>
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <input
             type="text"
             value={newProposal}
@@ -85,7 +165,7 @@ const Voting = () => {
           >
             Add Proposal
           </button>
-        </div>
+        </div> */}
 
         <button
           onClick={fetchWinner}

@@ -2,6 +2,19 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "voter",
+				"type": "address"
+			}
+		],
+		"name": "giveRightToVote",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "string[]",
 				"name": "proposalNames",
 				"type": "string[]"
@@ -13,12 +26,12 @@
 	{
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "proposalName",
-				"type": "string"
+				"internalType": "uint256",
+				"name": "proposal",
+				"type": "uint256"
 			}
 		],
-		"name": "addProposal",
+		"name": "vote",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -34,19 +47,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "voter",
-				"type": "address"
-			}
-		],
-		"name": "giveRightToVote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -84,19 +84,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "proposal",
-				"type": "uint256"
-			}
-		],
-		"name": "vote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
