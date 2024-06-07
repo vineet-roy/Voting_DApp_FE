@@ -3,7 +3,7 @@ import getWeb3 from "./web3";
 import VotingContract from "./VotingContract.json"; // Ensure this path is correct
 import "./App.css";
 import { toast } from 'react-toastify';
-const CONTRACT_ADDRESS = "0xc43b7557FbB4960C06E188F2d7f998C44361B84F";
+const CONTRACT_ADDRESS = "0x8CD891426c63fCF818Ca4729BA8D22b5cDe51f8a";
 
 const Voting = () => {
   const [web3, setWeb3] = useState(null);
@@ -14,7 +14,7 @@ const Voting = () => {
 
   const [winner, setWinner] = useState("");
   const [loading, setLoading] = useState(true);
-  const [delegateAddress, setDelegateAddress] = useState("");
+  const [voterAddress, setVoterAddress] = useState("");
 
     useEffect(() => {
       const init = async () => {
@@ -57,47 +57,12 @@ const Voting = () => {
     }, []);
 
     const handleVote = async (proposalIndex) => {
-      try {
-        await contract.methods.vote(proposalIndex).send({ from: accounts[0] });
-  
-        // Update the specific proposal's vote count
-        const updatedProposal = await contract.methods
-          .proposals(proposalIndex)
-          .call();
-        setProposals((prevProposals) => {
-          const updatedProposals = [...prevProposals];
-          updatedProposals[proposalIndex] = updatedProposal;
-          return updatedProposals;
-        });
-        toast.success("voted successfully!");
-      } catch (error) {
-        console.error("Error while voting:", error);
-      }
     };
 
     const fetchWinner = async () => {
-      try {
-        const winnerName = await contract.methods.winnerName().call();
-        setWinner(winnerName);
-      } catch (error) {
-        console.error("Error fetching winner:", error);
-      }
     };
-    const handleDelegate = async (delegateAddress) => {
-      if (!contract) {
-        console.error("Contract not loaded yet");
-        return;
-      }
-  
-      try {
-        await contract.methods
-          .giveRightToVote(delegateAddress)
-          .send({ from: accounts[0] });
-          toast.success("Voting rights provided successfully"); // Success notification
-        console.log("Voting rights delegated successfully");
-      } catch (error) {
-        console.error("Error delegating voting rights:", error);
-      }
+
+    const handleRightToVote = async (voterAddress) => {
     };
 
     const handleAddProposal = async () => {
@@ -181,12 +146,12 @@ const Voting = () => {
           <input
             type="text"
             placeholder="Address"
-            value={delegateAddress}
-            onChange={(e) => setDelegateAddress(e.target.value)}
+            value={voterAddress}
+            onChange={(e) => setVoterAddress(e.target.value)}
             className="border border-white bg-gray-500 rounded px-2 py-1 placeholder:text-gray-300"
           />
           <button
-            onClick={() => handleDelegate(delegateAddress)}
+            onClick={() => handleRightToVote(voterAddress)}
             className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 ml-2 rounded"
           >
             Whitelist Voter
